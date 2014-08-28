@@ -39,3 +39,8 @@ class CFO_Preroller extends CFO_Plugin {
 
 
 }
+
+function CFO_Preroller() {
+   return CFO_Preroller::get_instance();
+}
+add_action( 'plugins_loaded', 'CFO_Preroller' );
