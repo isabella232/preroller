@@ -34,6 +34,7 @@ class CFO_Preroller extends CFO_Plugin {
 		wp_enqueue_script( 'videojs-473', $this->plugin_url . '/library/videojs/video.js', array('jquery'), '4.7.3' );
     wp_enqueue_script( 'videojs-youtube', $this->plugin_url . '/library/videojs-youtube/src/youtube.js', array('jquery', 'videojs-473') );
     wp_enqueue_script( 'videojs-vast-plugin', $this->plugin_url . '/library/videojs_vast_ad_serving_plugin/js/vast.plugin.js', array('jquery', 'videojs-473', 'videojs-youtube') );
+    wp_enqueue_script( 'videojs-vast-init', $this->plugin_url . '/assets/js/init.js', array('jquery', 'videojs-473', 'videojs-youtube') );
 	}
 
 
