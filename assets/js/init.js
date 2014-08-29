@@ -77,7 +77,7 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
       		}
     }).ready(function(){
       var thePlayer = this;
-      console.log('ready')
+      console.log('ready');
 //      setTimeout(function() {
         //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
         //thePlayer.play();
@@ -113,6 +113,7 @@ function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, pos
             }
       });
       vid1.src({ src: theSrc, type: 'video/youtube' });
+      console.log(theSrc);
       vid1.play();
       vid1.on('ended', function(){
         setTimeout(function() {
@@ -159,6 +160,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
             }
       });
       vid1.src({ src: theSrc, type: 'video/youtube' });
+      console.log(theSrc);
       vid1.play();
       vid1.on('ended', function(){
         setTimeout(function() {
