@@ -146,6 +146,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
 
   setTimeout(function() {
     //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+    vid1 = videojs(id,{});
     vid1 = videojs(id,
       {
         "techOrder": ["youtube", "html5"],
@@ -162,28 +163,6 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
       vid1.src({ src: theSrc, type: 'video/youtube' });
       console.log('Roll the post-preroll video');
       vid1.play();
-      vid1.on('ended', function(){
-        setTimeout(function() {
-          vid1 = videojs(id,{});
-          vid1 = videojs(id,
-            {
-              "techOrder": ["youtube", "html5"],
-              "src": theSrc,
-              plugins: {
-                vastPlugin:
-                  {
-                    'ads' :
-                    [
-                    {
-                    }
-                    ]
-                  }
-              }
-            });
-          vid1.src({ src: theSrc, type: 'video/youtube' });
-          vid1.bigPlayButton.show();
-      }, postrollTime);
-    });
     //document.getElementById('info-ad-time').innerHTML = '';
   }, prerollTime);
 
