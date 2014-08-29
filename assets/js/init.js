@@ -16,8 +16,10 @@ function findAndReplace(id){
   var pattern = '<video id="'+id+'" src="" class="video-js vjs-default-skin" width="100%" controls preload="auto" data-setup="{}">';
 
   iframeObj.replaceWith(pattern);
-
-  return theSrc.split("?")[0];
+  var cleanSrc = theSrc.split("?")[0];
+  var ytid = cleanSrc.split("/embed/")[1];
+  var youtube = 'https://www.youtube.com/watch?v='+ytid;
+  return youtube;
 
 }
 
