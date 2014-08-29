@@ -17,7 +17,7 @@ function findAndReplace(id){
 
   iframeObj.replaceWith(pattern);
 
-  return theSrc;
+  return theSrc.split("?")[0];
 
 }
 
@@ -33,6 +33,7 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
   if (!id){return false;}
 
   var theSrc = findAndReplace(id);
+  console.log(theSrc);
 
   if(!postrollTime){
 
@@ -109,7 +110,7 @@ function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, pos
               }
             }
       });
-      vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+      vid1.src({ src: theSrc, type: 'video/youtube' });
       vid1.play();
       vid1.on('ended', function(){
         setTimeout(function() {
