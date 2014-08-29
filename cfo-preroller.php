@@ -1,4 +1,14 @@
 <?php
+
+/*
+Plugin Name: Preroller
+Plugin URI: http://cfo.com/
+Description: Roll a preroll
+Version: 1.0.0
+Author: Aram Zucker-Scharff, CFO Publishing
+License: GPL2
+*/
+
 require_once('cfo-plugin.php');
 class CFO_Preroller extends CFO_Plugin {
 
