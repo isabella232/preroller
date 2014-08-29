@@ -8,7 +8,21 @@ function zsDefaultFalse(theVar){
   return theVar;
 }
 
+function findAndReplace(id){
+  var wrapperObj = jQuery('.fluid-width-video-wrapper').first();
+  var iframeObj = wrapperObj.find('iframe');
+  var theSrc = iframeObj.attr('src');
+  var pattern = '<video id="'+id+'" src="" class="video-js vjs-default-skin" width="100%" controls preload="auto" data-setup="{}">';
+
+  iframeObj.replaceWith(pattern);
+
+  return theSrc;
+
+}
+
 function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
+  var preRollPluginSettings;
+  var postRollPluginSettings;
   id = zsDefaultFalse(id);
   prerollXML = zsDefaultFalse(prerollXML);
   prerollTime = zsDefaultFalse(prerollTime);
@@ -17,19 +31,33 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
 
   if (!id){return false;}
 
-  var preRollPluginSettings = [{
-      'position' : 'pre-roll',
-      'vastTagUrl' : prerollXML
-    },
-    {
-      'position' : 'post-roll',
-      'vastTagUrl' : postrollXML
+  var theSrc = findAndReplace(id);
+
+  if(!postrollTime){
+
+    preRollPluginSettings = [{
+        'position' : 'pre-roll',
+        'vastTagUrl' : prerollXML
+    }];
+    postRollPluginSettings = false;
+
+  } else {
+
+    preRollPluginSettings = [{
+        'position' : 'pre-roll',
+        'vastTagUrl' : prerollXML
+      },
+      {
+        'position' : 'post-roll',
+        'vastTagUrl' : postrollXML
     }];
 
-  var postRollPluginSettings = [{
-      'position' : 'post-roll',
-      'vastTagUrl' : postrollXML
+    postRollPluginSettings = [{
+        'position' : 'post-roll',
+        'vastTagUrl' : postrollXML
     }];
+
+  }
 
   var vid1 = videojs(id,
     {
@@ -54,46 +82,103 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
     });
 
   vid1.on('click', function(){
-    setTimeout(function() {
-      //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
-      vid1 = videojs('vid1',
-        {
-          "techOrder": ["youtube", "html5"],
-          "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
-          plugins:
-              {
-                vastPlugin:
-                {
-                  'ads' :
-                	   postRollPluginSettings
-                }
-              }
-        });
-        vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
-        vid1.play();
-        vid1.on('ended', function(){
-          setTimeout(function() {
-            vid1 = videojs('vid1',{});
-            vid1 = videojs('vid1',
-              {
-                "techOrder": ["youtube", "html5"],
-                "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
-                plugins: {
-                  vastPlugin:
-                    {
-                      'ads' :
-                      [
-                      {
-                      }
-                      ]
-                    }
-                }
-              });
-            vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
-            vid1.bigPlayButton.show();
-        }, postrollTime);
-      });
-      //document.getElementById('info-ad-time').innerHTML = '';
-    }, prerollTime);
+    if(!postrollTime){
+      postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, theSrc)
+    } else {
+      prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, postRollPluginSettings, theSrc);
+    }
   })
+}
+
+
+function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, postRollPluginSettings, theSrc){
+
+  setTimeout(function() {
+    //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+    vid1 = videojs(id,
+      {
+        "techOrder": ["youtube", "html5"],
+        "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+        plugins:
+            {
+              vastPlugin:
+              {
+                'ads' :
+                   postRollPluginSettings
+              }
+            }
+      });
+      vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+      vid1.play();
+      vid1.on('ended', function(){
+        setTimeout(function() {
+          vid1 = videojs(id,{});
+          vid1 = videojs(id,
+            {
+              "techOrder": ["youtube", "html5"],
+              "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+              plugins: {
+                vastPlugin:
+                  {
+                    'ads' :
+                    [
+                    {
+                    }
+                    ]
+                  }
+              }
+            });
+          vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+          vid1.bigPlayButton.show();
+      }, postrollTime);
+    });
+    //document.getElementById('info-ad-time').innerHTML = '';
+  }, prerollTime);
+
+}
+
+function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, theSrc){
+
+  setTimeout(function() {
+    //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+    vid1 = videojs(id,
+      {
+        "techOrder": ["youtube", "html5"],
+        "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+        plugins:
+            {
+              vastPlugin:
+              {
+                'ads' :
+                   [{}]
+              }
+            }
+      });
+      vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+      vid1.play();
+      vid1.on('ended', function(){
+        setTimeout(function() {
+          vid1 = videojs(id,{});
+          vid1 = videojs(id,
+            {
+              "techOrder": ["youtube", "html5"],
+              "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+              plugins: {
+                vastPlugin:
+                  {
+                    'ads' :
+                    [
+                    {
+                    }
+                    ]
+                  }
+              }
+            });
+          vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+          vid1.bigPlayButton.show();
+      }, postrollTime);
+    });
+    //document.getElementById('info-ad-time').innerHTML = '';
+  }, prerollTime);
+
 }
