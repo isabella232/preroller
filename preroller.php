@@ -41,7 +41,7 @@ class CFO_Preroller extends CFO_Plugin {
 	 * @return null
 	 */
 	public function scripts() {
-		wp_enqueue_style( 'videojs-473-style', $this->plugin_url . '/library/videojs/video-js.css');
+		wp_enqueue_style( 'videojs-473-style', 'http://vjs.zencdn.net/4.7.1/video-js.css');
 		wp_enqueue_style( 'videojs-ads-style', $this->plugin_url . '/library/videojs-contrib-ads/src/videojs.ads.css');
 		wp_enqueue_style( 'videojs-vast-style', $this->plugin_url . '/library/videojs-vast-plugin/videojs.vast.css');
 

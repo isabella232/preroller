@@ -160,7 +160,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
             }
       });
       vid1.src({ src: theSrc, type: 'video/youtube' });
-      console.log(theSrc);
+      console.log('Roll the post-preroll video');
       vid1.play();
       vid1.on('ended', function(){
         setTimeout(function() {
