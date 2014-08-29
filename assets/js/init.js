@@ -10,6 +10,7 @@ function zsDefaultFalse(theVar){
 
 function findAndReplace(id){
   var wrapperObj = jQuery('.fluid-width-video-wrapper').first();
+  // Do I need to set padding-top on the wrapper?
   var iframeObj = wrapperObj.find('iframe');
   var theSrc = iframeObj.attr('src');
   var pattern = '<video id="'+id+'" src="" class="video-js vjs-default-skin" width="100%" controls preload="auto" data-setup="{}">';
@@ -62,7 +63,7 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
   var vid1 = videojs(id,
     {
       "techOrder": ["youtube", "html5"],
-      "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+      "src": theSrc,
       plugins:
       		{
       			vastPlugin:
@@ -98,7 +99,7 @@ function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, pos
     vid1 = videojs(id,
       {
         "techOrder": ["youtube", "html5"],
-        "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+        "src": theSrc,
         plugins:
             {
               vastPlugin:
@@ -116,7 +117,7 @@ function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, pos
           vid1 = videojs(id,
             {
               "techOrder": ["youtube", "html5"],
-              "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+              "src": theSrc,
               plugins: {
                 vastPlugin:
                   {
@@ -128,7 +129,7 @@ function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, pos
                   }
               }
             });
-          vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+          vid1.src({ src: theSrc, type: 'video/youtube' });
           vid1.bigPlayButton.show();
       }, postrollTime);
     });
@@ -144,7 +145,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
     vid1 = videojs(id,
       {
         "techOrder": ["youtube", "html5"],
-        "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+        "src": theSrc,
         plugins:
             {
               vastPlugin:
@@ -154,7 +155,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
               }
             }
       });
-      vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+      vid1.src({ src: theSrc, type: 'video/youtube' });
       vid1.play();
       vid1.on('ended', function(){
         setTimeout(function() {
@@ -162,7 +163,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
           vid1 = videojs(id,
             {
               "techOrder": ["youtube", "html5"],
-              "src": "http://www.youtube.com/watch?v=u28dp_INmjk",
+              "src": theSrc,
               plugins: {
                 vastPlugin:
                   {
@@ -174,7 +175,7 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
                   }
               }
             });
-          vid1.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+          vid1.src({ src: theSrc, type: 'video/youtube' });
           vid1.bigPlayButton.show();
       }, postrollTime);
     });
