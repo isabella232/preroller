@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 
 <VAST version="2.0">
@@ -72,11 +71,7 @@
                 
               </VideoClicks>
               <MediaFiles>
-
         					<MediaFile delivery="progressive" bitrate="400" width="320" height="180" type="video/mp4"><![CDATA[http://i.cdn.openx.com/bf2/bf2668e9-fc2f-40de-99cb-1bb197723e72/fa8/fa8f58bd05104fb7948166a746ab5c47.mp4]]></MediaFile>
-        					<MediaFile delivery="progressive" bitrate="600" width="640" height="480" type="video/mp4"><![CDATA[http://i.cdn.openx.com/bf2/bf2668e9-fc2f-40de-99cb-1bb197723e72/fa8/fa8f58bd05104fb7948166a746ab5c47.mp4]]></MediaFile>
-        					<MediaFile delivery="progressive" bitrate="1024" width="640" height="480" type="video/mp4"><![CDATA[http://i.cdn.openx.com/bf2/bf2668e9-fc2f-40de-99cb-1bb197723e72/fa8/fa8f58bd05104fb7948166a746ab5c47.mp4]]></MediaFile>
-        					
               </MediaFiles>
             </Linear>
 
