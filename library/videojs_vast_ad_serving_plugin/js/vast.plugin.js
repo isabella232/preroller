@@ -554,10 +554,9 @@ function vastPlugin(options) {
 			if (!string) return false;
 
 			var message = "";
-			if (window.DOMParser) { // all browsers, except IE before version 9
-				var parser = new DOMParser();
+			if (window.jQuery) { // all browsers, except IE before version 9
 				try {
-					xmlDoc = parser.parseFromString(string, "text/xml");
+					xmlDoc = jQuery.parseXML(string);
 				} catch (e) {
 					console.log("XML parsing error.");
 					return false;
@@ -578,7 +577,7 @@ function vastPlugin(options) {
 					console.log("Cannot create XMLDocument object");
 					return false;
 				}
-				xmlDoc.loadXML(string);
+//				xmlDoc.loadXML(string);
 
 				if (xmlDoc.parseError && xmlDoc.parseError.errorCode != 0) {
 					console.log("XML Parsing Error: " + xmlDoc.parseError.reason + " at line " + xmlDoc.parseError.line + " at position " + xmlDoc.parseError.linepos);
@@ -608,20 +607,27 @@ function vastPlugin(options) {
 		};
 
 		function parseVast(data) {
-			var vastAds = data.querySelectorAll('Ad');
+			console.log('Now entering: parseVast');
+			console.log(data);
+			var vastAds = jQuery(data).find('Ad');
+			console.log('Found vastAds:')
+			console.log(vastAds);
 			for (var i = 0; i < vastAds.length; i++) {
 				try {
 					var vastAd = vastAds[i];
 
+					console.log('Get the ID')
 					//get AddId
 					adId = vastAd.getAttribute('id');
 
+					console.log('Get the duration')
 					//get duration
 					var vastDuration = vastAd.querySelector('duration,Duration');
 					if (vastDuration) {
 						duration = vastDuration.childNodes[0].nodeValue;
 					};
 
+					console.log('Get the impression URLs')
 					//get impression urls
 					var vastImpressions = vastAd.querySelectorAll('Impression');
 					if (vastImpressions && vastImpressions.length > 0) {
@@ -641,6 +647,7 @@ function vastPlugin(options) {
 						};
 					};
 
+					console.log('Get the tracking events.');
 					//get tracking events
 					var vastTrackingEvents = vastAd.querySelectorAll("Linear > TrackingEvents > Tracking, InLine > TrackingEvents > Tracking, Wrapper > TrackingEvents > Tracking");
 					if (vastTrackingEvents && vastTrackingEvents.length > 0) {
@@ -666,6 +673,7 @@ function vastPlugin(options) {
 						};
 					};
 
+					console.log('Get Clicktracking URLs');
 					//get clicktracking urls
 					var vastClickTrackings = vastAd.querySelectorAll('ClickTracking');
 					if (vastClickTrackings && vastClickTrackings.length > 0) {
@@ -685,6 +693,7 @@ function vastPlugin(options) {
 						};
 					};
 
+					console.log('Look for error URLs');
 					//get error urls
 					var vastError = vastAd.querySelectorAll('Error');
 					if (vastError && vastError.length > 0) {
@@ -705,11 +714,24 @@ function vastPlugin(options) {
 					};
 
 					//get media files
-					var vastMediaFiles = vastAd.querySelectorAll('Linear > MediaFiles > MediaFile,Video > MediaFiles > MediaFile');
-					if (vastMediaFiles && vastMediaFiles.length > 0) {
-						for (var i_mf = 0; i_mf < vastMediaFiles.length; i_mf++) {
-							var mediaFile = vastMediaFiles[i_mf];
-							var type = mediaFile.getAttribute('type');
+					console.log('Try and find media files.');
+					var vastMediaFiles = jQuery(vastAd).find('Linear > MediaFiles > MediaFile');
+					var vastMediaFilesTwo = jQuery(vastAd).find('Video > MediaFiles > MediaFile');
+					jQuery.extend(vastMediaFiles, vastMediaFilesTwo);
+					console.log(vastMediaFiles);
+					if (vastMediaFiles && vastMediaFiles.text().length > 0) {
+						console.log('We have found media files.');
+						if (vastMediaFiles.length == 0){
+							vastMediaFiles = new Array(vastMediaFiles[0]);
+						}
+						var i_mf = 0;
+						console.log(vastMediaFiles[0]);
+						jQuery.each(vastMediaFiles, function(k, v){
+							console.log('Walking through media files.');
+							console.log('At: ' +k);
+							var mediaFile = vastMediaFiles[k];
+							console.log('With: ' +mediaFile);
+							var type = jQuery(mediaFile).attr('type');
 							// Normalize mp4 format:
 							if (type == 'video/x-mp4' || type == 'video/h264') {
 								type = 'video/mp4';
@@ -717,13 +739,15 @@ function vastPlugin(options) {
 							if (type == 'video/mp4' || type == 'video/ogg' || type == 'video/webm') {
 								var mediaFileUrls = mediaFile.getElementsByTagName('URL');
 								if (mediaFileUrls && mediaFileUrls.length > 0) {
+									console.log('Looking for ad by URL element');
 									var srcFile = trim(decodeURIComponent(mediaFileUrls[0].childNodes[0].nodeValue))
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 										.replace(/\]\]\-?\-?\>/, '')
 								} else {
-									var srcFile = trim(decodeURIComponent(mediaFile.childNodes[0].nodeValue))
-										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, '')
+									console.log('Looking for ad by jQuery');
+									console.log(mediaFile);
+									console.log(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
+									var srcFile = trim(decodeURIComponent(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
 								};
 								var source = {
 									'src': srcFile,
@@ -739,9 +763,12 @@ function vastPlugin(options) {
 									source['data-height'] = mediaFile.getAttribute('height');
 								};
 								// Add the source object:
+								console.log('Push to source object');
+								console.log(source);
 								mediaFiles.push(source);
 							}
-						};
+							i_mf++;
+						});
 					};
 
 					// Look for video click through
