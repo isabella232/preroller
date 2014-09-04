@@ -71,7 +71,11 @@
                 
               </VideoClicks>
               <MediaFiles>
-        					<MediaFile delivery="progressive" bitrate="400" width="320" height="180" type="video/mp4"><![CDATA[http://i.cdn.openx.com/bf2/bf2668e9-fc2f-40de-99cb-1bb197723e72/fa8/fa8f58bd05104fb7948166a746ab5c47.mp4]]></MediaFile>
+                <MediaFile id="537391139" delivery="progressive"
+                           type="video/mp4" width="320"
+                           height="180">
+                  <![CDATA[http://i.cdn.openx.com/bf2/bf2668e9-fc2f-40de-99cb-1bb197723e72/569/569deedfcc1e4bf3a982a5d0c4e61d53.mp4]]>
+                </MediaFile>
               </MediaFiles>
             </Linear>
 
