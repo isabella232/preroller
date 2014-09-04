@@ -174,6 +174,19 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
 //      jQuery('#'+id+' .vjs-info-ad-time').remove();
 //      jQuery('#'+id+' .vjs-control').show();
     //document.getElementById('info-ad-time').innerHTML = '';
+    vid1.on('ended', function(){
+        vid1 = videojs(id,{});
+        vid1 = videojs(id,
+          {
+            "techOrder": ["youtube", "html5"],
+            "src": theSrc
+          });
+        vid1.src({ src: theSrc, type: 'video/youtube' });
+        vid1.height(pageHeight);
+        vid1.bigPlayButton.show();
+//          jQuery('#'+id+' .vjs-info-ad-time').remove();
+//          jQuery('#'+id+' .vjs-control').show();
+        });
   }, prerollTime);
 
 }
