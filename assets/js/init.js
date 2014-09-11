@@ -98,7 +98,6 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
 
   vid1.on('click', function(){
     if(!postrollTime){
-      console.log('No Postroll');
       postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, theSrc, pageHeight)
     } else {
       prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, postRollPluginSettings, theSrc, pageHeight);
@@ -128,21 +127,27 @@ function prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, pos
       console.log(theSrc);
       vid1.height(pageHeight);
       vid1.play();
-//      jQuery('#'+id+' .vjs-info-ad-time').remove();
-//      jQuery('#'+id+' .vjs-control').show();
       vid1.on('ended', function(){
         setTimeout(function() {
           vid1 = videojs(id,{});
           vid1 = videojs(id,
             {
               "techOrder": ["youtube", "html5"],
-              "src": theSrc
+              "src": theSrc,
+              plugins: {
+                vastPlugin:
+                  {
+                    'ads' :
+                    [
+                    {
+                    }
+                    ]
+                  }
+              }
             });
           vid1.src({ src: theSrc, type: 'video/youtube' });
           vid1.height(pageHeight);
           vid1.bigPlayButton.show();
-//          jQuery('#'+id+' .vjs-info-ad-time').remove();
-//          jQuery('#'+id+' .vjs-control').show();
       }, postrollTime);
     });
     //document.getElementById('info-ad-time').innerHTML = '';
@@ -159,20 +164,19 @@ function postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, the
       {
         "techOrder": ["youtube", "html5"],
         "src": theSrc,
-        plugins:{
-          vastPlugin:
-          {
-            'ads' :
-               []
-          }
-        }
+        plugins:
+            {
+              vastPlugin:
+              {
+                'ads' :
+                   [{}]
+              }
+            }
       });
       vid1.src({ src: theSrc, type: 'video/youtube' });
       vid1.height(pageHeight);
       console.log('Roll the post-preroll video');
       vid1.play();
-//      jQuery('#'+id+' .vjs-info-ad-time').remove();
-//      jQuery('#'+id+' .vjs-control').show();
     //document.getElementById('info-ad-time').innerHTML = '';
     vid1.on('ended', function(){
         vid1 = videojs(id,{});

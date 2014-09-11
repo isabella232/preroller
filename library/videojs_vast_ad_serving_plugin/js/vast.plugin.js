@@ -168,7 +168,7 @@ function vastPlugin(options) {
 		trackingEvents.forEach(function(element) {
 			loadTrackingPixel(element['eventUrl']);
 		});
-/**
+
 		player.controlBar.progressControl.show();
 		player.controlBar.currentTimeDisplay.show();
 		player.controlBar.timeDivider.show();
@@ -186,7 +186,7 @@ function vastPlugin(options) {
 		clearInterval(_v.adPlayInterval)
 		player.controlBar.el()
 			.removeChild(document.getElementById('info-ad-time'));
-**/
+
 		player.src(_v.mainTrack);
 		//console.log(_v.mainTrack);
 		if (adslot.getAdType() !== "post-roll") {
@@ -220,34 +220,34 @@ function vastPlugin(options) {
 				_v.muted = player.muted();
 
 				//hide controls
-//				player.controlBar.progressControl.hide();
-//				player.controlBar.currentTimeDisplay.hide();
-//				player.controlBar.timeDivider.hide();
-//				player.controlBar.durationDisplay.hide();
+				player.controlBar.progressControl.hide();
+				player.controlBar.currentTimeDisplay.hide();
+				player.controlBar.timeDivider.hide();
+				player.controlBar.durationDisplay.hide();
 
 				//TODO declare ad info string more central
 
 				//TODO check if control bar is fadeout and fadein if needed
 
 				//disable fade out
-//				addClass(player.controlBar.el(), 'vjs-manual-lock-showing');
+				addClass(player.controlBar.el(), 'vjs-manual-lock-showing');
 
 				//overlay to deny show default controls by right click and to catch clicks
-/**				var stageOverlay = document.createElement('a');
+				var stageOverlay = document.createElement('a');
 				player.el().appendChild(stageOverlay);
 				stageOverlay.className = 'vjs-stage-overlay';
 				stageOverlay.id = 'stage-overlay';
 				stageOverlay.onclick = function() {
 					adClick();
 				};
-**/
-//				var advertiser = document.createElement('div');
-//				playerControl = player.controlBar;
-//				playerControl.el()
-//					.appendChild(advertiser);
-//				advertiser.innerHTML = "AD: " + adslot.getDuration() + " seconds remaining.";
-//				advertiser.className = 'vjs-info-ad-time';
-//				advertiser.id = 'info-ad-time';
+
+				var advertiser = document.createElement('div');
+				playerControl = player.controlBar;
+				playerControl.el()
+					.appendChild(advertiser);
+				advertiser.innerHTML = "AD: " + adslot.getDuration() + " seconds remaining.";
+				advertiser.className = 'vjs-info-ad-time';
+				advertiser.id = 'info-ad-time';
 
 				_v.mainTrack = player.currentSrc();
 				//console.log(_v.mainTrack);
@@ -269,7 +269,7 @@ function vastPlugin(options) {
 
 				//don't use timerupdate event from videojs because check every 15ms is too much
 				_v.adPlayInterval = setInterval(function() {
-//					adTimer();
+					adTimer();
 				},
 				500);
 
