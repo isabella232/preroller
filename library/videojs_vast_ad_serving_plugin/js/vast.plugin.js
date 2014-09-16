@@ -709,11 +709,24 @@ function vastPlugin(options) {
 					};
 
 					//get media files
-					var vastMediaFiles = vastAd.querySelectorAll('Linear > MediaFiles > MediaFile,Video > MediaFiles > MediaFile');
-					if (vastMediaFiles && vastMediaFiles.length > 0) {
-						for (var i_mf = 0; i_mf < vastMediaFiles.length; i_mf++) {
-							var mediaFile = vastMediaFiles[i_mf];
-							var type = mediaFile.getAttribute('type');
+					console.log('Try and find media files.');
+					var vastMediaFiles = jQuery(vastAd).find('Linear > MediaFiles > MediaFile');
+					var vastMediaFilesTwo = jQuery(vastAd).find('Video > MediaFiles > MediaFile');
+					jQuery.extend(vastMediaFiles, vastMediaFilesTwo);
+					console.log(vastMediaFiles);
+					if (vastMediaFiles && vastMediaFiles.text().length > 0) {
+						console.log('We have found media files.');
+						if (vastMediaFiles.length == 0){
+							vastMediaFiles = new Array(vastMediaFiles[0]);
+						}
+						var i_mf = 0;
+						console.log(vastMediaFiles[0]);
+						jQuery.each(vastMediaFiles, function(k, v){
+							console.log('Walking through media files.');
+							console.log('At: ' +k);
+							var mediaFile = vastMediaFiles[k];
+							console.log('With: ' +mediaFile);
+							var type = jQuery(mediaFile).attr('type');
 							// Normalize mp4 format:
 							if (type == 'video/x-mp4' || type == 'video/h264') {
 								type = 'video/mp4';
@@ -721,14 +734,15 @@ function vastPlugin(options) {
 							if (type == 'video/mp4' || type == 'video/ogg' || type == 'video/webm') {
 								var mediaFileUrls = mediaFile.getElementsByTagName('URL');
 								if (mediaFileUrls && mediaFileUrls.length > 0) {
-									var srcFile = trim(decodeURIComponent(mediaFileUrls[0].childNodes[0].nodeValue))
-										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, '')
-								} else {
 									var srcFile = trim(decodeURIComponent(mediaFile.childNodes[0].nodeValue))
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, '')
-								};
+										.replace(/\]\]\-?\-?\>/, '');
+								} else {
+									console.log('Looking for ad by jQuery');
+									console.log(mediaFile);
+									console.log(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
+									var srcFile = trim(decodeURIComponent(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+								}
 								var source = {
 									'src': srcFile,
 									'type': type
@@ -745,8 +759,8 @@ function vastPlugin(options) {
 								// Add the source object:
 								mediaFiles.push(source);
 							}
-						};
-					};
+						});
+					}
 
 					// Look for video click through
 					var vastClickThrough = vastAd.querySelector('VideoClicks > ClickThrough');
