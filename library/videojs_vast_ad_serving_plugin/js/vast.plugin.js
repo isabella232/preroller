@@ -167,10 +167,26 @@ function vastPlugin(options) {
 		player.controlBar.el()
 			.removeChild(document.getElementById('info-ad-time'));
 
-		player.src(_v.mainTrack);
+		console.log(_v.mainTrack);
+		player.src(_v);
 		if (adslot.getAdType() !== "post-roll") {
 			console.log('Now play mainTrack');
-			player.play();
+			player.options.techOrder = ["youtube", "html5"];
+			//console.log(player);
+			var vid1 = videojs(player.id(),
+				{
+					"techOrder": ["youtube", "html5"],
+					"src": _v.mainTrack,
+					"type": 'video/youtube'
+				}).ready(
+					function(){
+						var thisPlayer = this;
+				    thisPlayer.src({ src: _v.mainTrack, type: 'video/youtube' });
+					}
+				);
+			vid1.play();
+			console.log(player.id());
+
 		}
 		_v.currentSlot = null;
 	};
@@ -230,6 +246,7 @@ function vastPlugin(options) {
 				advertiser.id = 'info-ad-time';
 
 				_v.mainTrack = player.currentSrc();
+				console.log(_v.mainTrack);
 				player.src(adslot.getMediaFiles());
 
 				//TODO: Coul be better
