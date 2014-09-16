@@ -775,6 +775,13 @@ function vastPlugin(options) {
 								.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 								.replace(/\]\]\-?\-?\>/, '');
 						}
+						if ('' == clickThrough){
+							console.log('No Clickthrough Found');
+							var theClickBank = jQuery(vastAd).find('VideoClicks > ClickThrough');
+							console.log(theClickBank[0].innerHTML);
+							clickThrough = trim(decodeURIComponent(theClickBank[0].innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+
+						}
 					};
 
 					//check if ad is fallback (advertiser special)
