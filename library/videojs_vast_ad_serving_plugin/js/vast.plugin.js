@@ -518,7 +518,7 @@ function vastPlugin(options) {
 			url = replaceCacheBuster(_url);
 			if (window.XMLHttpRequest) {
 				var xhr = new XMLHttpRequest();
-				xhr.open("GET", url, false);
+				xhr.open("GET", url, true);
 				xhr.withCredentials = true;
 				xhr.send(null);
 				if (xhr.status == 200 && xhr.responseXML != null) {
@@ -740,8 +740,8 @@ function vastPlugin(options) {
 								} else {
 									console.log('Looking for ad by jQuery');
 									console.log(mediaFile);
-									console.log(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
-									var srcFile = trim(decodeURIComponent(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+									console.log(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
+									var srcFile = trim(decodeURIComponent(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
 								}
 								var source = {
 									'src': srcFile,
@@ -778,8 +778,8 @@ function vastPlugin(options) {
 						if ('' == clickThrough){
 							console.log('No Clickthrough Found');
 							var theClickBank = jQuery(vastAd).find('VideoClicks > ClickThrough');
-							console.log(theClickBank[0].innerHTML);
-							clickThrough = trim(decodeURIComponent(theClickBank[0].innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+							console.log(jQuery(theClickBank[0]).text());
+							clickThrough = trim(decodeURIComponent(jQuery(theClickBank[0]).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
 
 						}
 					};
