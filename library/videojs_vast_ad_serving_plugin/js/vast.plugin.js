@@ -233,9 +233,11 @@ function vastPlugin(options) {
 				player.el().appendChild(stageOverlay);
 				stageOverlay.className = 'vjs-stage-overlay';
 				stageOverlay.id = 'stage-overlay';
-				stageOverlay.onclick = function() {
+				console.log(stageOverlay);
+				player.on('click', function() {
+					console.log('adclicked');
 					adClick();
-				};
+				});
 
 				var advertiser = document.createElement('div');
 				playerControl = player.controlBar;
@@ -328,13 +330,18 @@ function vastPlugin(options) {
 		console.log('DEBUG: open target link');
 		var url = _v.currentSlot.getClickThroughUrl();
 		console.log('DEBUG: url: ' + url);
-		if (isUrl(url)) {
-			player.pause();
-			console.log('DEBUG: player paused');
-			var newTab = window.open(url, '_blank');
-			console.log('DEBUG: window opened');
-			newTab.focus();
-			console.log('DEBUG: window focus');
+		var isPlaying = player.paused();
+		if (isPlaying){
+			if (isUrl(url)) {
+				player.pause();
+				console.log('DEBUG: player paused');
+				var newTab = window.open(url, '_blank');
+				console.log('DEBUG: window opened');
+				newTab.focus();
+				console.log('DEBUG: window focus');
+			}
+		} else {
+			player.play();
 		}
 	};
 
