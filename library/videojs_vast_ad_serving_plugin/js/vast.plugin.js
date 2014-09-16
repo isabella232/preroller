@@ -22,34 +22,17 @@ function vastPlugin(options) {
 					for (var i = 0; i < _v.adList.length; i++) {
 						if (_v.adList[i].getAdType() === "post-roll" && !_v.adList[i].isSeen()) {
 							playAd(_v.adList[i]);
-							console.log('postroll playAd');
 						}
 					}
 				}
 			} else { //Ad ended
 				stopAd(_v.currentSlot);
-				console.log('stopAd');
 			}
 		});
 
 		player.on('error', function(e) {
 			console.log('VastPlugin::error: ' + e);
-/**			for (var k in e)
-				{
-				    if (e.hasOwnProperty(k))
-				    {
-				        console.log(k + ':' + e[k]);
-								var x = e[k];
-								for (var z in x)
-									{
-											if (x.hasOwnProperty(z))
-											{
-													console.log(z + ':' + x[z]);
-											}
-									}
-				    }
-				}
-**/		});
+		});
 
 		player.on('volumechange', function(e) {
 			if (_v.currentSlot) {
@@ -74,18 +57,15 @@ function vastPlugin(options) {
 
 		player.on('play', function(e) {
 			//if maintrack is starting
-			console.log('player.on(play)');
 			if (_v.prerolls < maxPreRolls && _v.currentSlot === null) {
 				//check if pre-roll exists
 				for (var i = 0; i < _v.adList.length; i++) {
 					if (_v.adList[i].getAdType() === "pre-roll" && !_v.adList[i].isSeen()) {
-						console.log('playAd');
 						playAd(_v.adList[i]);
 						break;
 					}
 				}
 			};
-			console.log('ads over');
 		});
 
 		player.on('fullscreenchange', function(e) {
@@ -188,8 +168,8 @@ function vastPlugin(options) {
 			.removeChild(document.getElementById('info-ad-time'));
 
 		player.src(_v.mainTrack);
-		//console.log(_v.mainTrack);
 		if (adslot.getAdType() !== "post-roll") {
+			console.log('Now play mainTrack');
 			player.play();
 		}
 		_v.currentSlot = null;
@@ -250,9 +230,8 @@ function vastPlugin(options) {
 				advertiser.id = 'info-ad-time';
 
 				_v.mainTrack = player.currentSrc();
-				//console.log(_v.mainTrack);
 				player.src(adslot.getMediaFiles());
-				//console.log();
+
 				//TODO: Coul be better
 				//check if source is compatible
 				var cnodes = player.el()
@@ -278,7 +257,6 @@ function vastPlugin(options) {
 				trackingEvents.forEach(function(element) {
 					loadTrackingPixel(element['eventUrl']);
 				});
-				console.log('play');
 				player.play();
 			}
 		}else{
@@ -499,7 +477,6 @@ function vastPlugin(options) {
 
 		this.getMediaFiles = function() {
 			var files = [];
-			console.log('getMediaFiles');
 			mediaFiles.forEach(function(element, index, array) {
 				files.push({
 					type: element.type,
@@ -616,18 +593,15 @@ function vastPlugin(options) {
 				try {
 					var vastAd = vastAds[i];
 
-					console.log('Get the ID')
 					//get AddId
 					adId = vastAd.getAttribute('id');
 
-					console.log('Get the duration')
 					//get duration
 					var vastDuration = vastAd.querySelector('duration,Duration');
 					if (vastDuration) {
 						duration = vastDuration.childNodes[0].nodeValue;
 					};
 
-					console.log('Get the impression URLs')
 					//get impression urls
 					var vastImpressions = vastAd.querySelectorAll('Impression');
 					if (vastImpressions && vastImpressions.length > 0) {
@@ -647,7 +621,6 @@ function vastPlugin(options) {
 						};
 					};
 
-					console.log('Get the tracking events.');
 					//get tracking events
 					var vastTrackingEvents = vastAd.querySelectorAll("Linear > TrackingEvents > Tracking, InLine > TrackingEvents > Tracking, Wrapper > TrackingEvents > Tracking");
 					if (vastTrackingEvents && vastTrackingEvents.length > 0) {
@@ -673,7 +646,6 @@ function vastPlugin(options) {
 						};
 					};
 
-					console.log('Get Clicktracking URLs');
 					//get clicktracking urls
 					var vastClickTrackings = vastAd.querySelectorAll('ClickTracking');
 					if (vastClickTrackings && vastClickTrackings.length > 0) {
@@ -693,7 +665,6 @@ function vastPlugin(options) {
 						};
 					};
 
-					console.log('Look for error URLs');
 					//get error urls
 					var vastError = vastAd.querySelectorAll('Error');
 					if (vastError && vastError.length > 0) {
@@ -714,24 +685,11 @@ function vastPlugin(options) {
 					};
 
 					//get media files
-					console.log('Try and find media files.');
-					var vastMediaFiles = jQuery(vastAd).find('Linear > MediaFiles > MediaFile');
-					var vastMediaFilesTwo = jQuery(vastAd).find('Video > MediaFiles > MediaFile');
-					jQuery.extend(vastMediaFiles, vastMediaFilesTwo);
-					console.log(vastMediaFiles);
-					if (vastMediaFiles && vastMediaFiles.text().length > 0) {
-						console.log('We have found media files.');
-						if (vastMediaFiles.length == 0){
-							vastMediaFiles = new Array(vastMediaFiles[0]);
-						}
-						var i_mf = 0;
-						console.log(vastMediaFiles[0]);
-						jQuery.each(vastMediaFiles, function(k, v){
-							console.log('Walking through media files.');
-							console.log('At: ' +k);
-							var mediaFile = vastMediaFiles[k];
-							console.log('With: ' +mediaFile);
-							var type = jQuery(mediaFile).attr('type');
+					var vastMediaFiles = vastAd.querySelectorAll('Linear > MediaFiles > MediaFile,Video > MediaFiles > MediaFile');
+					if (vastMediaFiles && vastMediaFiles.length > 0) {
+						for (var i_mf = 0; i_mf < vastMediaFiles.length; i_mf++) {
+							var mediaFile = vastMediaFiles[i_mf];
+							var type = mediaFile.getAttribute('type');
 							// Normalize mp4 format:
 							if (type == 'video/x-mp4' || type == 'video/h264') {
 								type = 'video/mp4';
@@ -739,15 +697,13 @@ function vastPlugin(options) {
 							if (type == 'video/mp4' || type == 'video/ogg' || type == 'video/webm') {
 								var mediaFileUrls = mediaFile.getElementsByTagName('URL');
 								if (mediaFileUrls && mediaFileUrls.length > 0) {
-									console.log('Looking for ad by URL element');
 									var srcFile = trim(decodeURIComponent(mediaFileUrls[0].childNodes[0].nodeValue))
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 										.replace(/\]\]\-?\-?\>/, '')
 								} else {
-									console.log('Looking for ad by jQuery');
-									console.log(mediaFile);
-									console.log(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
-									var srcFile = trim(decodeURIComponent(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+									var srcFile = trim(decodeURIComponent(mediaFile.childNodes[0].nodeValue))
+										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
+										.replace(/\]\]\-?\-?\>/, '')
 								};
 								var source = {
 									'src': srcFile,
@@ -763,12 +719,9 @@ function vastPlugin(options) {
 									source['data-height'] = mediaFile.getAttribute('height');
 								};
 								// Add the source object:
-								console.log('Push to source object');
-								console.log(source);
 								mediaFiles.push(source);
 							}
-							i_mf++;
-						});
+						};
 					};
 
 					// Look for video click through
