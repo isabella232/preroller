@@ -95,15 +95,6 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
         //document.getElementById('info-ad-time').innerHTML = '';
 //      }, 15000);
     });
-
-  vid1.on('click', function(){
-    if(!postrollTime){
-      console.log('No Postroll');
-      postPreRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, theSrc, pageHeight)
-    } else {
-      prePostRoll(id, prerollXML, prerollTime, postrollXML, postrollTime, postRollPluginSettings, theSrc, pageHeight);
-    }
-  })
 }
 
 

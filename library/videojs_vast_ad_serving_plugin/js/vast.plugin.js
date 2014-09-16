@@ -22,34 +22,17 @@ function vastPlugin(options) {
 					for (var i = 0; i < _v.adList.length; i++) {
 						if (_v.adList[i].getAdType() === "post-roll" && !_v.adList[i].isSeen()) {
 							playAd(_v.adList[i]);
-							console.log('postroll playAd');
 						}
 					}
 				}
 			} else { //Ad ended
 				stopAd(_v.currentSlot);
-				console.log('stopAd');
 			}
 		});
 
 		player.on('error', function(e) {
 			console.log('VastPlugin::error: ' + e);
-/**			for (var k in e)
-				{
-				    if (e.hasOwnProperty(k))
-				    {
-				        console.log(k + ':' + e[k]);
-								var x = e[k];
-								for (var z in x)
-									{
-											if (x.hasOwnProperty(z))
-											{
-													console.log(z + ':' + x[z]);
-											}
-									}
-				    }
-				}
-**/		});
+		});
 
 		player.on('volumechange', function(e) {
 			if (_v.currentSlot) {
@@ -74,18 +57,15 @@ function vastPlugin(options) {
 
 		player.on('play', function(e) {
 			//if maintrack is starting
-			console.log('player.on(play)');
 			if (_v.prerolls < maxPreRolls && _v.currentSlot === null) {
 				//check if pre-roll exists
 				for (var i = 0; i < _v.adList.length; i++) {
 					if (_v.adList[i].getAdType() === "pre-roll" && !_v.adList[i].isSeen()) {
-						console.log('playAd');
 						playAd(_v.adList[i]);
 						break;
 					}
 				}
 			};
-			console.log('ads over');
 		});
 
 		player.on('fullscreenchange', function(e) {
@@ -187,10 +167,26 @@ function vastPlugin(options) {
 		player.controlBar.el()
 			.removeChild(document.getElementById('info-ad-time'));
 
-		player.src(_v.mainTrack);
-		//console.log(_v.mainTrack);
+		console.log(_v.mainTrack);
+		player.src(_v);
 		if (adslot.getAdType() !== "post-roll") {
-			player.play();
+			console.log('Now play mainTrack');
+			player.options.techOrder = ["youtube", "html5"];
+			//console.log(player);
+			var vid1 = videojs(player.id(),
+				{
+					"techOrder": ["youtube", "html5"],
+					"src": _v.mainTrack,
+					"type": 'video/youtube'
+				}).ready(
+					function(){
+						var thisPlayer = this;
+				    thisPlayer.src({ src: _v.mainTrack, type: 'video/youtube' });
+					}
+				);
+			vid1.play();
+			console.log(player.id());
+
 		}
 		_v.currentSlot = null;
 	};
@@ -237,9 +233,11 @@ function vastPlugin(options) {
 				player.el().appendChild(stageOverlay);
 				stageOverlay.className = 'vjs-stage-overlay';
 				stageOverlay.id = 'stage-overlay';
-				stageOverlay.onclick = function() {
+				console.log(stageOverlay);
+				player.on('click', function() {
+					console.log('adclicked');
 					adClick();
-				};
+				});
 
 				var advertiser = document.createElement('div');
 				playerControl = player.controlBar;
@@ -250,9 +248,9 @@ function vastPlugin(options) {
 				advertiser.id = 'info-ad-time';
 
 				_v.mainTrack = player.currentSrc();
-				//console.log(_v.mainTrack);
+				console.log(_v.mainTrack);
 				player.src(adslot.getMediaFiles());
-				//console.log();
+
 				//TODO: Coul be better
 				//check if source is compatible
 				var cnodes = player.el()
@@ -278,7 +276,6 @@ function vastPlugin(options) {
 				trackingEvents.forEach(function(element) {
 					loadTrackingPixel(element['eventUrl']);
 				});
-				console.log('play');
 				player.play();
 			}
 		}else{
@@ -333,13 +330,18 @@ function vastPlugin(options) {
 		console.log('DEBUG: open target link');
 		var url = _v.currentSlot.getClickThroughUrl();
 		console.log('DEBUG: url: ' + url);
-		if (isUrl(url)) {
-			player.pause();
-			console.log('DEBUG: player paused');
-			var newTab = window.open(url, '_blank');
-			console.log('DEBUG: window opened');
-			newTab.focus();
-			console.log('DEBUG: window focus');
+		var isPlaying = player.paused();
+		if (isPlaying){
+			if (isUrl(url)) {
+				player.pause();
+				console.log('DEBUG: player paused');
+				var newTab = window.open(url, '_blank');
+				console.log('DEBUG: window opened');
+				newTab.focus();
+				console.log('DEBUG: window focus');
+			}
+		} else {
+			player.play();
 		}
 	};
 
@@ -499,7 +501,6 @@ function vastPlugin(options) {
 
 		this.getMediaFiles = function() {
 			var files = [];
-			console.log('getMediaFiles');
 			mediaFiles.forEach(function(element, index, array) {
 				files.push({
 					type: element.type,
@@ -616,18 +617,15 @@ function vastPlugin(options) {
 				try {
 					var vastAd = vastAds[i];
 
-					console.log('Get the ID')
 					//get AddId
 					adId = vastAd.getAttribute('id');
 
-					console.log('Get the duration')
 					//get duration
 					var vastDuration = vastAd.querySelector('duration,Duration');
 					if (vastDuration) {
 						duration = vastDuration.childNodes[0].nodeValue;
 					};
 
-					console.log('Get the impression URLs')
 					//get impression urls
 					var vastImpressions = vastAd.querySelectorAll('Impression');
 					if (vastImpressions && vastImpressions.length > 0) {
@@ -647,7 +645,6 @@ function vastPlugin(options) {
 						};
 					};
 
-					console.log('Get the tracking events.');
 					//get tracking events
 					var vastTrackingEvents = vastAd.querySelectorAll("Linear > TrackingEvents > Tracking, InLine > TrackingEvents > Tracking, Wrapper > TrackingEvents > Tracking");
 					if (vastTrackingEvents && vastTrackingEvents.length > 0) {
@@ -673,7 +670,6 @@ function vastPlugin(options) {
 						};
 					};
 
-					console.log('Get Clicktracking URLs');
 					//get clicktracking urls
 					var vastClickTrackings = vastAd.querySelectorAll('ClickTracking');
 					if (vastClickTrackings && vastClickTrackings.length > 0) {
@@ -693,7 +689,6 @@ function vastPlugin(options) {
 						};
 					};
 
-					console.log('Look for error URLs');
 					//get error urls
 					var vastError = vastAd.querySelectorAll('Error');
 					if (vastError && vastError.length > 0) {
@@ -739,16 +734,15 @@ function vastPlugin(options) {
 							if (type == 'video/mp4' || type == 'video/ogg' || type == 'video/webm') {
 								var mediaFileUrls = mediaFile.getElementsByTagName('URL');
 								if (mediaFileUrls && mediaFileUrls.length > 0) {
-									console.log('Looking for ad by URL element');
-									var srcFile = trim(decodeURIComponent(mediaFileUrls[0].childNodes[0].nodeValue))
+									var srcFile = trim(decodeURIComponent(mediaFile.childNodes[0].nodeValue))
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, '')
+										.replace(/\]\]\-?\-?\>/, '');
 								} else {
 									console.log('Looking for ad by jQuery');
 									console.log(mediaFile);
 									console.log(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
 									var srcFile = trim(decodeURIComponent(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
-								};
+								}
 								var source = {
 									'src': srcFile,
 									'type': type
@@ -763,13 +757,10 @@ function vastPlugin(options) {
 									source['data-height'] = mediaFile.getAttribute('height');
 								};
 								// Add the source object:
-								console.log('Push to source object');
-								console.log(source);
 								mediaFiles.push(source);
 							}
-							i_mf++;
 						});
-					};
+					}
 
 					// Look for video click through
 					var vastClickThrough = vastAd.querySelector('VideoClicks > ClickThrough');
@@ -783,6 +774,13 @@ function vastPlugin(options) {
 							clickThrough = trim(decodeURIComponent(vastClickThrough.childNodes[0].nodeValue))
 								.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 								.replace(/\]\]\-?\-?\>/, '');
+						}
+						if ('' == clickThrough){
+							console.log('No Clickthrough Found');
+							var theClickBank = jQuery(vastAd).find('VideoClicks > ClickThrough');
+							console.log(theClickBank[0].innerHTML);
+							clickThrough = trim(decodeURIComponent(theClickBank[0].innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+
 						}
 					};
 
