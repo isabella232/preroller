@@ -518,19 +518,14 @@ function vastPlugin(options) {
 			url = replaceCacheBuster(_url);
 			var xhrText = '';
 			if (window.XMLHttpRequest) {
-				var xhr = jQuery.post(ajaxurl, {
-					action: 'go_get_that_vast',
-					//We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
-					vast_url: url
-				}, function(response){
-					//console.log(xhr.ajaxError());
-					if (jQuery(response).text() != null) {
-						handleResult(jQuery(response).text());
-					}else{
-						console.log("XHR error.");
-					}
-				});
+					var xhr = window.VASTXhr;
+						if (xhr.responseText != null) {
+							handleResult(xhr.responseText);
+						} else{
+							console.log("XHR error.");
+						}
 
+					//jQuery(xhr).on('ready', function(){console.log(xhr.responseText);})
 
 			} else {
 				console.log('XHR not exist!');
@@ -749,8 +744,8 @@ function vastPlugin(options) {
 								} else {
 									console.log('Looking for ad by jQuery');
 									console.log(mediaFile);
-									console.log(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
-									var srcFile = trim(decodeURIComponent(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+									console.log(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,''));
+									var srcFile = trim(decodeURIComponent(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 								}
 								var source = {
 									'src': srcFile,
@@ -787,8 +782,8 @@ function vastPlugin(options) {
 						if ('' == clickThrough){
 							console.log('No Clickthrough Found');
 							var theClickBank = jQuery(vastAd).find('VideoClicks > ClickThrough');
-							console.log(jQuery(theClickBank[0]).text());
-							clickThrough = trim(decodeURIComponent(jQuery(theClickBank[0]).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+							console.log(jQuery(theClickBank[0]).text().replace(/ /g,''));
+							clickThrough = trim(decodeURIComponent(jQuery(theClickBank[0]).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 
 						}
 					};
