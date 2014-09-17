@@ -516,16 +516,22 @@ function vastPlugin(options) {
 
 		function _requestAd(_url) {
 			url = replaceCacheBuster(_url);
+			var xhrText = '';
 			if (window.XMLHttpRequest) {
-				var xhr = new XMLHttpRequest();
-				xhr.open("GET", url, true);
-				xhr.withCredentials = true;
-				xhr.send(null);
-				if (xhr.status == 200 && xhr.responseXML != null) {
-					handleResult(xhr.responseText);
-				}else{
-					console.log("XHR error.");
-				}
+				var xhr = jQuery.post(ajaxurl, {
+					action: 'go_get_that_vast',
+					//We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
+					vast_url: url
+				}, function(response){
+					//console.log(xhr.ajaxError());
+					if (jQuery(response).text() != null) {
+						handleResult(jQuery(response).text());
+					}else{
+						console.log("XHR error.");
+					}
+				});
+
+
 			} else {
 				console.log('XHR not exist!');
 			}
@@ -534,6 +540,7 @@ function vastPlugin(options) {
 		function handleResult(data) {
 			// If our data is a string we need to parse it as XML
 			if (typeof data === 'string') {
+				console.log('It is an XML string.');
 				// Clean everything before <?xml?> tag
 				var xmlPosition = data.indexOf("<?xml");
 				if (xmlPosition > 0) {
@@ -541,8 +548,10 @@ function vastPlugin(options) {
 					data = data.replace(junk, '');
 				}
 				try {
-					//data = $.parseXML(data);
-					data = string2XML(data);
+					console.log('Not yet a String');
+					data = jQuery.parseXML(data);
+					console.log(data);
+					//data = string2XML(data);
 				} catch (error) {
 					// error in parsing xml
 					console.log("error in parsing xml");
