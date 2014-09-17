@@ -85,6 +85,7 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
         {
           "techOrder": ["youtube", "html5"],
           "src": theSrc,
+          "muted": true,
           plugins:
               {
                 vastPlugin:
@@ -99,7 +100,8 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
           thePlayer.height(pageHeight);
     //      setTimeout(function() {
             //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
-            //thePlayer.play();
+          thePlayer.muted(true);
+          thePlayer.play();
             //document.getElementById('info-ad-time').innerHTML = '';
     //      }, 15000);
         });
