@@ -72,29 +72,39 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
     }];
 
   }
+  var topXhr = jQuery.post(MyAjax.ajaxurl, {
+    action: 'go_get_that_vast',
+    //We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
+    vast_url: prerollXML,
+    security: MyAjax.security
+  }, function(response){
+    //console.log(xhr.ajaxError());
+  }).done(function(){
+      window.VASTXhr = topXhr;
+      var vid1 = videojs(id,
+        {
+          "techOrder": ["youtube", "html5"],
+          "src": theSrc,
+          plugins:
+              {
+                vastPlugin:
+                {
+                  'ads' :
+                     preRollPluginSettings
+                }
+              }
+        }).ready(function(){
+          var thePlayer = this;
+          console.log('ready');
+          thePlayer.height(pageHeight);
+    //      setTimeout(function() {
+            //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
+            //thePlayer.play();
+            //document.getElementById('info-ad-time').innerHTML = '';
+    //      }, 15000);
+        });
+  });
 
-  var vid1 = videojs(id,
-    {
-      "techOrder": ["youtube", "html5"],
-      "src": theSrc,
-      plugins:
-      		{
-      			vastPlugin:
-      			{
-      				'ads' :
-      			     preRollPluginSettings
-      			}
-      		}
-    }).ready(function(){
-      var thePlayer = this;
-      console.log('ready');
-      thePlayer.height(pageHeight);
-//      setTimeout(function() {
-        //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
-        //thePlayer.play();
-        //document.getElementById('info-ad-time').innerHTML = '';
-//      }, 15000);
-    });
 }
 
 

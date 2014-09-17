@@ -516,16 +516,17 @@ function vastPlugin(options) {
 
 		function _requestAd(_url) {
 			url = replaceCacheBuster(_url);
+			var xhrText = '';
 			if (window.XMLHttpRequest) {
-				var xhr = new XMLHttpRequest();
-				xhr.open("GET", url, false);
-				xhr.withCredentials = true;
-				xhr.send(null);
-				if (xhr.status == 200 && xhr.responseXML != null) {
-					handleResult(xhr.responseText);
-				}else{
-					console.log("XHR error.");
-				}
+					var xhr = window.VASTXhr;
+						if (xhr.responseText != null) {
+							handleResult(xhr.responseText);
+						} else{
+							console.log("XHR error.");
+						}
+
+					//jQuery(xhr).on('ready', function(){console.log(xhr.responseText);})
+
 			} else {
 				console.log('XHR not exist!');
 			}
@@ -534,6 +535,7 @@ function vastPlugin(options) {
 		function handleResult(data) {
 			// If our data is a string we need to parse it as XML
 			if (typeof data === 'string') {
+				console.log('It is an XML string.');
 				// Clean everything before <?xml?> tag
 				var xmlPosition = data.indexOf("<?xml");
 				if (xmlPosition > 0) {
@@ -541,8 +543,10 @@ function vastPlugin(options) {
 					data = data.replace(junk, '');
 				}
 				try {
-					//data = $.parseXML(data);
-					data = string2XML(data);
+					console.log('Not yet a String');
+					data = jQuery.parseXML(data);
+					//console.log(data);
+					//data = string2XML(data);
 				} catch (error) {
 					// error in parsing xml
 					console.log("error in parsing xml");
@@ -740,8 +744,8 @@ function vastPlugin(options) {
 								} else {
 									console.log('Looking for ad by jQuery');
 									console.log(mediaFile);
-									console.log(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, ''));
-									var srcFile = trim(decodeURIComponent(mediaFile.innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+									console.log(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,''));
+									var srcFile = trim(decodeURIComponent(jQuery(mediaFile).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 								}
 								var source = {
 									'src': srcFile,
@@ -778,8 +782,8 @@ function vastPlugin(options) {
 						if ('' == clickThrough){
 							console.log('No Clickthrough Found');
 							var theClickBank = jQuery(vastAd).find('VideoClicks > ClickThrough');
-							console.log(theClickBank[0].innerHTML);
-							clickThrough = trim(decodeURIComponent(theClickBank[0].innerHTML.replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '')));
+							console.log(jQuery(theClickBank[0]).text().replace(/ /g,''));
+							clickThrough = trim(decodeURIComponent(jQuery(theClickBank[0]).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 
 						}
 					};
