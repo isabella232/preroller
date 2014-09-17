@@ -32,46 +32,6 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
   prerollTime = zsDefaultFalse(prerollTime);
   postrollXML = zsDefaultFalse(postrollXML);
   postrollTime = zsDefaultFalse(postrollTime);
-
-  var pageHeight;
-
-  if (jQuery('body').hasClass('home')){
-    pageHeight = 169;
-  } else {
-    pageHeight = 360;
-  }
-
-
-  if (!id){return false;}
-
-  var theSrc = findAndReplace(id);
-  console.log(theSrc);
-
-  if(!postrollTime){
-
-    preRollPluginSettings = [{
-        'position' : 'pre-roll',
-        'vastTagUrl' : prerollXML
-    }];
-    postRollPluginSettings = false;
-
-  } else {
-
-    preRollPluginSettings = [{
-        'position' : 'pre-roll',
-        'vastTagUrl' : prerollXML
-      },
-      {
-        'position' : 'post-roll',
-        'vastTagUrl' : postrollXML
-    }];
-
-    postRollPluginSettings = [{
-        'position' : 'post-roll',
-        'vastTagUrl' : postrollXML
-    }];
-
-  }
   var topXhr = jQuery.post(MyAjax.ajaxurl, {
     action: 'go_get_that_vast',
     //We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
@@ -80,6 +40,46 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
   }, function(response){
     //console.log(xhr.ajaxError());
   }).done(function(){
+    var pageHeight;
+
+    if (jQuery('body').hasClass('home')){
+      pageHeight = 169;
+    } else {
+      pageHeight = 360;
+    }
+
+
+    if (!id){return false;}
+
+    var theSrc = findAndReplace(id);
+    console.log(theSrc);
+
+    if(!postrollTime){
+
+      preRollPluginSettings = [{
+          'position' : 'pre-roll',
+          'vastTagUrl' : prerollXML
+      }];
+      postRollPluginSettings = false;
+
+    } else {
+
+      preRollPluginSettings = [{
+          'position' : 'pre-roll',
+          'vastTagUrl' : prerollXML
+        },
+        {
+          'position' : 'post-roll',
+          'vastTagUrl' : postrollXML
+      }];
+
+      postRollPluginSettings = [{
+          'position' : 'post-roll',
+          'vastTagUrl' : postrollXML
+      }];
+
+    }
+
       window.VASTXhr = topXhr;
       var vid1 = videojs(id,
         {
