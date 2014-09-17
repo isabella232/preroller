@@ -545,7 +545,7 @@ function vastPlugin(options) {
 				try {
 					console.log('Not yet a String');
 					data = jQuery.parseXML(data);
-					console.log(data);
+					//console.log(data);
 					//data = string2XML(data);
 				} catch (error) {
 					// error in parsing xml
