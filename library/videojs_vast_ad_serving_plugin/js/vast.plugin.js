@@ -37,6 +37,7 @@ function vastPlugin(options) {
 		player.on('volumechange', function(e) {
 			if (_v.currentSlot) {
 				if (player.muted() && !_v.muted) {
+					console.log('player is muted');
 					//user has muted
 					_v.muted = true;
 					var trackingEvents = _v.currentSlot.getTrackingEventUrls('mute');
@@ -58,9 +59,9 @@ function vastPlugin(options) {
 
 		player.on('play', function(e) {
 			if (player.muted()) {
-				console.log('player is muted');
+
 				//user has muted
-				_v.muted = true;
+				//_v.muted = true;
 			}
 			//if maintrack is starting
 			if (_v.prerolls < maxPreRolls && _v.currentSlot === null) {
@@ -188,9 +189,17 @@ function vastPlugin(options) {
 					function(){
 						var thisPlayer = this;
 				    thisPlayer.src({ src: _v.mainTrack, type: 'video/youtube' });
+						console.log(_v.muted);
+						thisPlayer.muted(_v.muted);
+						if (!_v.muted){
+							thisPlayer.volume(0.5);
+							thisPlayer.on('play', function(){ this.volume(0.5); });
+						}
 					}
 				);
+			vid1.on('play', function(){ this.muted(_v.muted); });
 			vid1.play();
+
 			console.log(player.id());
 
 		}
@@ -234,7 +243,7 @@ function vastPlugin(options) {
 						thePlayer.muted(true);
 					});
 
-					player.on('play', function(){ this.muted(true); })
+					player.on('play', function(){ this.muted(true); });
 				}
 				//player.muted = _v.muted;
 				//TODO declare ad info string more central
