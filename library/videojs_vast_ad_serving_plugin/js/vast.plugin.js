@@ -56,6 +56,22 @@ function vastPlugin(options) {
 		});
 
 		player.on('play', function(e) {
+			if (player.muted() && !_v.muted) {
+				//user has muted
+				_v.muted = true;
+				var trackingEvents = _v.currentSlot.getTrackingEventUrls('mute');
+				trackingEvents.forEach(function(element) {
+					loadTrackingPixel(element['eventUrl']);
+				});
+			} else if (!player.muted() && _v.muted) {
+				//user has unmuted
+				_v.muted = false;
+				//call tracking events
+				var trackingEvents = _v.currentSlot.getTrackingEventUrls('unmute');
+				trackingEvents.forEach(function(element) {
+					loadTrackingPixel(element['eventUrl']);
+				});
+			}
 			//if maintrack is starting
 			if (_v.prerolls < maxPreRolls && _v.currentSlot === null) {
 				//check if pre-roll exists
