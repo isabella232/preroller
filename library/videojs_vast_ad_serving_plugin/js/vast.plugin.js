@@ -45,6 +45,7 @@ function vastPlugin(options) {
 					});
 				} else if (!player.muted() && _v.muted) {
 					//user has unmuted
+					console.log('User has unmuted.')
 					_v.muted = false;
 					//call tracking events
 					var trackingEvents = _v.currentSlot.getTrackingEventUrls('unmute');
@@ -60,7 +61,7 @@ function vastPlugin(options) {
 				console.log('player is muted');
 				//user has muted
 				_v.muted = true;
-			} 
+			}
 			//if maintrack is starting
 			if (_v.prerolls < maxPreRolls && _v.currentSlot === null) {
 				//check if pre-roll exists
@@ -219,13 +220,23 @@ function vastPlugin(options) {
 
 				//if maintrack was muted ad will also be muted, dont call tracking events for mute
 				_v.muted = player.muted();
-
+				console.log('Player mute state is')
+				console.log(player.muted());
 				//hide controls
 				player.controlBar.progressControl.hide();
 				player.controlBar.currentTimeDisplay.hide();
 				player.controlBar.timeDivider.hide();
 				player.controlBar.durationDisplay.hide();
+				if (player.muted()){
+					player.ready(function(){
+						var thePlayer = this;
+						console.log('ready');
+						thePlayer.muted(true);
+					});
 
+					player.on('play', function(){ this.muted(true); })
+				}
+				//player.muted = _v.muted;
 				//TODO declare ad info string more central
 
 				//TODO check if control bar is fadeout and fadein if needed
@@ -368,7 +379,7 @@ function vastPlugin(options) {
 		_v.currentSlot = null;
 		_v.api = '';
 		_v.adPlayInterval = null;
-		_v.muted = false;
+		_v.muted = true;
 		_v.fullScreen = false;
 		_v.prerolls = 0;
 		_v.postrolls = 0;
