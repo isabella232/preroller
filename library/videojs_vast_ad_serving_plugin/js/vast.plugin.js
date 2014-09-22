@@ -678,13 +678,16 @@ function vastPlugin(options) {
 
 					//get tracking events
 					var vastTrackingEvents = jQuery(vastAd).find("Linear > TrackingEvents > Tracking");
-					var vastTrackingEventsTwo = jQuery(vastAd).find("InLine > TrackingEvents > Tracking, Wrapper > TrackingEvents > Tracking");
+					var vastTrackingEventsTwo = jQuery(vastAd).find("InLine > TrackingEvents > Tracking");
+					var vastTrackingEventsThree = jQuery(vastAd).find("Wrapper > TrackingEvents > Tracking");
 					jQuery.extend(vastTrackingEvents, vastTrackingEventsTwo);
-					if (vastTrackingEvents && vastTrackingEvents.length > 0) {
-						for (var i_te = 0; i_te < vastTrackingEvents.length; i_te++) {
-							var vastTrackingEventUrls = vastTrackingEvents[i_te].getElementsByTagName('URL');
-							if (vastTrackingEventUrls && vastTrackingEventUrls.length > 0) {
-								foreach(vastTrackingEventUrls, function(urlNode) {
+					jQuery.extend(vastTrackingEvents, vastTrackingEventsThree);
+					if (vastTrackingEvents && vastTrackingEvents.text().length > 0) {
+						jQuery.each(vastTrackingEvents, function(i_te,v) {
+							var currentValue = jQuery(vastTrackingEvents[i_te]);
+							var vastTrackingEventUrls = currentValue.children('URL');
+							if (vastTrackingEventUrls && jQuery(vastTrackingEventUrls).text().length > 0) {
+								jQuery.each(vastTrackingEventUrls, function(i,urlNode) {
 									trackingEvents.push({
 										'eventName': urlNode.parentNode.getAttribute('event'),
 										'eventUrl': trim(decodeURIComponent(urlNode.childNodes[0].nodeValue))
@@ -700,7 +703,7 @@ function vastPlugin(options) {
 										.replace(/\]\]\-?\-?\>/, '')
 								});
 							};
-						};
+						});
 					};
 
 					//get clicktracking urls
