@@ -46,7 +46,7 @@ function vastPlugin(options) {
 					});
 				} else if (!player.muted() && _v.muted) {
 					//user has unmuted
-					console.log('User has unmuted.')
+					console.log('User has unmuted.');
 					_v.muted = false;
 					//call tracking events
 					var trackingEvents = _v.currentSlot.getTrackingEventUrls('unmute');
@@ -199,7 +199,6 @@ function vastPlugin(options) {
 				);
 			vid1.on('play', function(){ this.muted(_v.muted); });
 			vid1.play();
-
 			console.log(player.id());
 
 		}
@@ -231,6 +230,7 @@ function vastPlugin(options) {
 				_v.muted = player.muted();
 				console.log('Player mute state is')
 				console.log(player.muted());
+
 				//hide controls
 				player.controlBar.progressControl.hide();
 				player.controlBar.currentTimeDisplay.hide();
@@ -246,6 +246,7 @@ function vastPlugin(options) {
 					player.on('play', function(){ this.muted(true); });
 				}
 				//player.muted = _v.muted;
+
 				//TODO declare ad info string more central
 
 				//TODO check if control bar is fadeout and fadein if needed
@@ -657,26 +658,28 @@ function vastPlugin(options) {
 					};
 
 					//get impression urls
-					var vastImpressions = vastAd.querySelectorAll('Impression');
-					if (vastImpressions && vastImpressions.length > 0) {
-						for (var i_imp = 0; i_imp < vastImpressions.length; i_imp++) {
-							var vastImpressionUrls = vastImpressions[i_imp].getElementsByTagName('URL');
-							if (vastImpressionUrls && vastImpressionUrls.length > 0) {
+					var vastImpressions = jQuery(vastAd).find('Impression');
+					if (vastImpressions && vastImpressions.text().length > 0) {
+						console.log('We have found an impressions link');
+						jQuery.each(vastImpressions, function(i_imp,v) {
+							var currentValue = jQuery(vastImpressions[i_imp]);
+							var vastImpressionUrls = currentValue.children('URL');
+							if (vastImpressionUrls && jQuery(vastImpressionUrls).text().length > 0) {
 								foreach(vastImpressionUrls, function(urlNode) {
 									impressions.push(trim(decodeURIComponent(urlNode.childNodes[0].nodeValue))
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 										.replace(/\]\]\-?\-?\>/, ''));
 								});
 							} else {
-								impressions.push(trim(decodeURIComponent(vastImpressions[i_imp].childNodes[0].nodeValue))
-									.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-									.replace(/\]\]\-?\-?\>/, ''));
+								impressions.push(trim(decodeURIComponent(currentValue.text()).replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 							};
-						};
+						});
 					};
 
 					//get tracking events
-					var vastTrackingEvents = vastAd.querySelectorAll("Linear > TrackingEvents > Tracking, InLine > TrackingEvents > Tracking, Wrapper > TrackingEvents > Tracking");
+					var vastTrackingEvents = jQuery(vastAd).find("Linear > TrackingEvents > Tracking");
+					var vastTrackingEventsTwo = jQuery(vastAd).find("InLine > TrackingEvents > Tracking, Wrapper > TrackingEvents > Tracking");
+					jQuery.extend(vastTrackingEvents, vastTrackingEventsTwo);
 					if (vastTrackingEvents && vastTrackingEvents.length > 0) {
 						for (var i_te = 0; i_te < vastTrackingEvents.length; i_te++) {
 							var vastTrackingEventUrls = vastTrackingEvents[i_te].getElementsByTagName('URL');
