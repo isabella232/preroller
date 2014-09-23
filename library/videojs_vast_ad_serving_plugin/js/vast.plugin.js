@@ -689,40 +689,41 @@ function vastPlugin(options) {
 							if (vastTrackingEventUrls && jQuery(vastTrackingEventUrls).text().length > 0) {
 								jQuery.each(vastTrackingEventUrls, function(i,urlNode) {
 									trackingEvents.push({
-										'eventName': urlNode.parentNode.getAttribute('event'),
-										'eventUrl': trim(decodeURIComponent(urlNode.childNodes[0].nodeValue))
+										'eventName': urlNode.parent().get(0).attr('event'),
+										'eventUrl': trim(decodeURIComponent(urlNode.text())
 											.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-											.replace(/\]\]\-?\-?\>/, '')
+											.replace(/\]\]\-?\-?\>/, '').replace(/ /g,''))
 									});
 								});
 							} else {
 								trackingEvents.push({
-									'eventName': vastTrackingEvents[i_te].getAttribute('event'),
-									'eventUrl': trim(decodeURIComponent(vastTrackingEvents[i_te].childNodes[0].nodeValue))
+									'eventName': currentValue.attr('event'),
+									'eventUrl': trim(decodeURIComponent(currentValue.text())
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, '')
+										.replace(/\]\]\-?\-?\>/, '').replace(/ /g,''))
 								});
 							};
 						});
 					};
 
 					//get clicktracking urls
-					var vastClickTrackings = vastAd.querySelectorAll('ClickTracking');
+					var vastClickTrackings = jQuery(vastAd).find('ClickTracking');
 					if (vastClickTrackings && vastClickTrackings.length > 0) {
-						for (var i_ct = 0; i_ct < vastClickTrackings.length; i_ct++) {
-							var vastClickTrackingUrls = vastClickTrackings[i_ct].getElementsByTagName('URL');
+						console.log('We found some clicktracking.');
+						jQuery.each(vastClickTrackings, function(i_ct, v){
+							var vastClickTrackingUrls = v.children('URL');
 							if (vastClickTrackingUrls && vastClickTrackingUrls.length > 0) {
-								foreach(vastClickTrackingUrls, function(urlNode) {
-									clickEvents.push(trim(decodeURIComponent(urlNode.childNodes[0].nodeValue))
+								jQuery.each(vastClickTrackingUrls, function(i, urlNode) {
+									clickEvents.push(trim(decodeURIComponent(urlNode.parent().get(0).text())
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, ''));
+										.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
 								});
 							} else {
-								clickEvents.push(trim(decodeURIComponent(vastClickTrackings[i_ct].childNodes[0].nodeValue))
-									.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-									.replace(/\]\]\-?\-?\>/, ''));
+								clickEvents.push(trim(decodeURIComponent(v.text())
+										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
+										.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
 							};
-						};
+						});
 					};
 
 					//get error urls
