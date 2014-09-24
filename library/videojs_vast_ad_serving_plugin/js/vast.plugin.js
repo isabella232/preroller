@@ -347,7 +347,8 @@ function vastPlugin(options) {
 		//call tracking urls
 		console.log('DEBUG: Ad clicked, call tracking urls');
 		var clickTrackingUrls = _v.currentSlot.getClickTrackingUrls();
-		clickTrackingUrls.forEach(function(element) {
+		console.log(clickTrackingUrls);
+		jQuery.each(clickTrackingUrls, function(i, element) {
 			console.log('DEBUG: call: '+element);
 			loadTrackingPixel(element);
 		});
@@ -683,10 +684,16 @@ function vastPlugin(options) {
 					jQuery.extend(vastTrackingEvents, vastTrackingEventsTwo);
 					jQuery.extend(vastTrackingEvents, vastTrackingEventsThree);
 					if (vastTrackingEvents && vastTrackingEvents.text().length > 0) {
-						jQuery.each(vastTrackingEvents, function(i_te,v) {
+						console.log('We found tracking events.');
+						console.log(vastTrackingEvents);
+						jQuery.each(vastTrackingEvents, function(i_te, v) {
+							console.log('Walk tracking events.');
+							console.log(this);
+							console.log(v);
 							var currentValue = jQuery(vastTrackingEvents[i_te]);
 							var vastTrackingEventUrls = currentValue.children('URL');
 							if (vastTrackingEventUrls && jQuery(vastTrackingEventUrls).text().length > 0) {
+								console.log('Getting by URL element');
 								jQuery.each(vastTrackingEventUrls, function(i,urlNode) {
 									trackingEvents.push({
 										'eventName': urlNode.parent().get(0).attr('event'),
@@ -696,6 +703,11 @@ function vastPlugin(options) {
 									});
 								});
 							} else {
+								console.log('Getting by event attribute.');
+								console.log(currentValue.attr('event'));
+								console.log(trim(decodeURIComponent(currentValue.text())
+									.replace(/^\<\!\-?\-?\[CDATA\[/, '')
+									.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
 								trackingEvents.push({
 									'eventName': currentValue.attr('event'),
 									'eventUrl': trim(decodeURIComponent(currentValue.text())
@@ -704,6 +716,8 @@ function vastPlugin(options) {
 								});
 							};
 						});
+					} else {
+						console.log('We found no tracking.');
 					};
 
 					//get clicktracking urls
@@ -724,6 +738,8 @@ function vastPlugin(options) {
 										.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
 							};
 						});
+					} else {
+						console.log('We found no clicktracking.');
 					};
 
 					//get error urls
