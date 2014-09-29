@@ -672,24 +672,26 @@ function vastPlugin(options) {
 										.replace(/\]\]\-?\-?\>/, ''));
 								});
 							} else {
+								console.log(trim(decodeURIComponent(currentValue.text()).replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 								impressions.push(trim(decodeURIComponent(currentValue.text()).replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 							};
 						});
 					};
 
 					//get tracking events
-					var vastTrackingEvents = jQuery(vastAd).find("Linear > TrackingEvents > Tracking");
-					var vastTrackingEventsTwo = jQuery(vastAd).find("InLine > TrackingEvents > Tracking");
-					var vastTrackingEventsThree = jQuery(vastAd).find("Wrapper > TrackingEvents > Tracking");
-					jQuery.extend(vastTrackingEvents, vastTrackingEventsTwo);
-					jQuery.extend(vastTrackingEvents, vastTrackingEventsThree);
+					var vastTrackingEvents = jQuery(vastAd).find("Tracking");
+					//console.log(vastTrackingEvents);
+					//var vastTrackingEventsTwo = jQuery(vastAd).find("InLine > TrackingEvents > Tracking");
+					//var vastTrackingEventsThree = jQuery(vastAd).find("Wrapper > TrackingEvents > Tracking");
+					//jQuery.extend(vastTrackingEvents, vastTrackingEventsTwo);
+					//jQuery.extend(vastTrackingEvents, vastTrackingEventsThree);
 					if (vastTrackingEvents && vastTrackingEvents.text().length > 0) {
 						console.log('We found tracking events.');
 						console.log(vastTrackingEvents);
 						jQuery.each(vastTrackingEvents, function(i_te, v) {
-							console.log('Walk tracking events.');
-							console.log(this);
-							console.log(v);
+							//console.log('Walk tracking events.');
+							//console.log(this);
+							//console.log(v);
 							var currentValue = jQuery(vastTrackingEvents[i_te]);
 							var vastTrackingEventUrls = currentValue.children('URL');
 							if (vastTrackingEventUrls && jQuery(vastTrackingEventUrls).text().length > 0) {
@@ -703,11 +705,11 @@ function vastPlugin(options) {
 									});
 								});
 							} else {
-								console.log('Getting by event attribute.');
-								console.log(currentValue.attr('event'));
-								console.log(trim(decodeURIComponent(currentValue.text())
-									.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-									.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
+								//console.log('Getting by event attribute.');
+								//console.log(currentValue.attr('event'));
+								//console.log(trim(decodeURIComponent(currentValue.text())
+								//	.replace(/^\<\!\-?\-?\[CDATA\[/, '')
+								//	.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
 								trackingEvents.push({
 									'eventName': currentValue.attr('event'),
 									'eventUrl': trim(decodeURIComponent(currentValue.text())
@@ -722,11 +724,11 @@ function vastPlugin(options) {
 
 					//get clicktracking urls
 					var vastClickTrackings = jQuery(vastAd).find('ClickTracking');
-					if (vastClickTrackings && vastClickTrackings.length > 0) {
+					if (vastClickTrackings && vastClickTrackings.text().length > 0) {
 						console.log('We found some clicktracking.');
 						jQuery.each(vastClickTrackings, function(i_ct, v){
 							var vastClickTrackingUrls = v.children('URL');
-							if (vastClickTrackingUrls && vastClickTrackingUrls.length > 0) {
+							if (vastClickTrackingUrls && vastClickTrackingUrls.text().length > 0) {
 								jQuery.each(vastClickTrackingUrls, function(i, urlNode) {
 									clickEvents.push(trim(decodeURIComponent(urlNode.parent().get(0).text())
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
@@ -743,7 +745,7 @@ function vastPlugin(options) {
 					};
 
 					//get error urls
-					var vastError = vastAd.querySelectorAll('Error');
+					var vastError = jQuery(vastAd).find('Error');
 					if (vastError && vastError.length > 0) {
 						for (var i_err = 0; i_err < vastError.length; i_err++) {
 							var vastErrorUrls = vastError[i_err].getElementsByTagName('URL');
