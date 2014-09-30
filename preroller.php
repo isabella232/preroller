@@ -20,7 +20,7 @@ class CFO_Preroller extends CFO_Plugin {
 		$this->basename   = apply_filters( 'CFO_Preroller_plugin_basename', plugin_basename( $this->file ) );
 		$this->plugin_dir = apply_filters( 'CFO_Preroller_plugin_dir_path', plugin_dir_path( $this->file ) );
 		$this->plugin_url = apply_filters( 'CFO_Preroller_plugin_dir_url',  plugin_dir_url( $this->file ) );
-		$this->ver = apply_filters( 'CFO_Preroller_version',  '1.2.1' );
+		$this->ver = apply_filters( 'CFO_Preroller_version',  '1.2.3' );
 
 	}
 
