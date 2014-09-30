@@ -27,18 +27,20 @@ function findAndReplace(id){
 function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
   var preRollPluginSettings;
   var postRollPluginSettings;
+  jQuery('.fluid-width-video-wrapper').first().css('visibility','hidden');
   id = zsDefaultFalse(id);
   prerollXML = zsDefaultFalse(prerollXML);
   prerollTime = zsDefaultFalse(prerollTime);
   postrollXML = zsDefaultFalse(postrollXML);
   postrollTime = zsDefaultFalse(postrollTime);
+  console.log('Find a VAST');
   var topXhr = jQuery.post(MyAjax.ajaxurl, {
     action: 'go_get_that_vast',
     //We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
     vast_url: prerollXML,
     security: MyAjax.security
   }, function(response){
-    //console.log(xhr.ajaxError());
+    console.log('Vast Found');
   }).done(function(){
     var pageHeight;
 
@@ -98,6 +100,7 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
           var thePlayer = this;
           console.log('ready');
           thePlayer.height(pageHeight);
+          jQuery('.fluid-width-video-wrapper').first().css('visibility','visible');
     //      setTimeout(function() {
             //thePlayer.src({ src: 'http://www.youtube.com/watch?v=u28dp_INmjk', type: 'video/youtube' });
           thePlayer.muted(true);
