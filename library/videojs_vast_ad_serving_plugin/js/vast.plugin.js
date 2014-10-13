@@ -477,6 +477,7 @@ function vastPlugin(options) {
 			for (var i = 0; i < trackingEvents.length; ++i) {
 				if (trackingEvents[i].eventName == eventName){
 					console.log('Pushing tracking event: '+eventName);
+					console.log(trackingEvents[i]);
 					_events.push(trackingEvents[i]);
 				}
 			};
