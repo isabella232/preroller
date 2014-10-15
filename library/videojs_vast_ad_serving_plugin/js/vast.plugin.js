@@ -894,7 +894,7 @@ function vastPlugin(options) {
 						var vastWrapperAdTagUrlTwo = jQuery(vastAd).find('VASTAdTagURI');
 						jQuery.extend(vastWrapperAdTagUrl, vastWrapperAdTagUrlTwo);
 						console.log(vastWrapperAdTagUrl);
-						if (vastWrapperAdTagUrl) {
+						if (vastWrapperAdTagUrl.length > 0) {
 							if (wrapperRedirects < maxWrapperRedirects) {
 								console.log('We can still do more redirects!');
 								var vastWrapperAdTagUrls = vastWrapperAdTagUrl.children('URL');
