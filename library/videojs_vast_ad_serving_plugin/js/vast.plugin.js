@@ -543,21 +543,47 @@ function vastPlugin(options) {
 			_requestAd(vastTagUrl);
 		};
 
-		function _requestAd(_url) {
+		function _requestAd(_url, redirect) {
 			url = replaceCacheBuster(_url);
-			var xhrText = '';
-			if (window.XMLHttpRequest) {
-					var xhr = window.VASTXhr;
-						if (xhr.responseText != null) {
-							handleResult(xhr.responseText);
-						} else{
-							console.log("XHR error.");
-						}
-
-					//jQuery(xhr).on('ready', function(){console.log(xhr.responseText);})
-
+			if (redirect){
+				var new_request = jQuery.post(MyAjax.ajaxurl, {
+					action: 'go_get_that_vast',
+					//We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
+					vast_url: url,
+					security: MyAjax.security
+				}, function(response){
+					console.log('Next VAST Found');
+					//console.log(response);
+					/**
+					secondXhr = jQuery.post(MyAjax.ajaxurl, {
+						action: 'go_get_that_vast',
+						//We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
+						vast_url: prerollXML,
+						security: MyAjax.security
+					});
+					**/
+				}).done(function(){
+					if (new_request.responseText != null) {
+						handleResult(new_request.responseText);
+					} else{
+						console.log("Attempt to load next VAST resulted in an error.");
+					}
+				});
 			} else {
-				console.log('XHR not exist!');
+				var xhrText = '';
+				if (window.XMLHttpRequest) {
+						var xhr = window.VASTXhr;
+							if (xhr.responseText != null) {
+								handleResult(xhr.responseText);
+							} else{
+								console.log("XHR error.");
+							}
+
+						//jQuery(xhr).on('ready', function(){console.log(xhr.responseText);})
+
+				} else {
+					console.log('XHR not exist!');
+				}
 			}
 		};
 
@@ -727,28 +753,40 @@ function vastPlugin(options) {
 					var vastClickTrackings = jQuery(vastAd).find('ClickTracking');
 					if (vastClickTrackings && vastClickTrackings.text().length > 0) {
 						console.log('We found some clicktracking.');
+						//console.log(vastClickTrackings[0]);
+
 						jQuery.each(vastClickTrackings, function(i_ct, v){
-							var vastClickTrackingUrls = v.children('URL');
-							if (vastClickTrackingUrls && vastClickTrackingUrls.text().length > 0) {
+							console.log('Walk through the URL list.');
+							console.log(this);
+							var vastClickTrackingUrls = jQuery(this).children('URL');
+							console.log(vastClickTrackingUrls);
+							if (vastClickTrackingUrls && vastClickTrackingUrls.length > 0) {
 								jQuery.each(vastClickTrackingUrls, function(i, urlNode) {
+									console.log('Hit all the click URLs');
 									clickEvents.push(trim(decodeURIComponent(urlNode.parent().get(0).text())
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 										.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
 								});
+								console.log(clickEvents);
 							} else {
-								clickEvents.push(trim(decodeURIComponent(v.text())
+								console.log('Only one click URL');
+								clickEvents.push(trim(decodeURIComponent(jQuery(this).text())
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 										.replace(/\]\]\-?\-?\>/, '').replace(/ /g,'')));
+
+								console.log(clickEvents);
 							};
 						});
 					} else {
 						console.log('We found no clicktracking.');
-					};
+					}
 
+					console.log('Try and find error URLs');
 					//get error urls
 					var vastError = jQuery(vastAd).find('Error');
-					if (vastError && vastError.length > 0) {
-						for (var i_err = 0; i_err < vastError.length; i_err++) {
+					console.log(vastError);
+					if (vastError && vastError.text().length > 0) {
+						jQuery.each(vastError, function(i_err, v) {
 							var vastErrorUrls = vastError[i_err].getElementsByTagName('URL');
 							if (vastErrorUrls && vastErrorUrls.length > 0) {
 								foreach(vastErrorUrls, function(urlNode) {
@@ -761,7 +799,7 @@ function vastPlugin(options) {
 									.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 									.replace(/\]\]\-?\-?\>/, ''));
 							};
-						};
+						});
 					};
 
 					//get media files
@@ -847,28 +885,32 @@ function vastPlugin(options) {
 					};
 
 					// Check for Wrapper response
-					var vastWrapper = vastAd.querySelector('Wrapper');
+					var vastWrapper = jQuery(vastAd).find('Wrapper');
+					console.log('Do we have a wrapper?');
 					if (vastWrapper) {
 						//var vastWrapperAdTagUrl = vastAd.querySelector('VASTAdTagURL,VASTAdTagURI');
 						console.log('Try and find redirects.');
 						var vastWrapperAdTagUrl = jQuery(vastAd).find('VASTAdTagURL');
 						var vastWrapperAdTagUrlTwo = jQuery(vastAd).find('VASTAdTagURI');
 						jQuery.extend(vastWrapperAdTagUrl, vastWrapperAdTagUrlTwo);
+						console.log(vastWrapperAdTagUrl);
 						if (vastWrapperAdTagUrl) {
 							if (wrapperRedirects < maxWrapperRedirects) {
-								var vastWrapperAdTagUrls = vastWrapperAdTagUrl.getElementsByTagName('URL');
+								console.log('We can still do more redirects!');
+								var vastWrapperAdTagUrls = vastWrapperAdTagUrl.children('URL');
 								if (vastWrapperAdTagUrls && vastWrapperAdTagUrls.length > 0) {
+									console.log('There are multiple URLs');
 									_url = trim(decodeURIComponent(vastWrapperAdTagUrls[0].childNodes[0].nodeValue))
 										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
 										.replace(/\]\]\-?\-?\>/, '');
 								} else {
-									_url = trim(decodeURIComponent(vastWrapperAdTagUrl.childNodes[0].nodeValue))
-										.replace(/^\<\!\-?\-?\[CDATA\[/, '')
-										.replace(/\]\]\-?\-?\>/, '');
+									console.log('There is only one URL.');
+									console.log(vastWrapperAdTagUrl);
+									_url = trim(decodeURIComponent(jQuery(vastWrapperAdTagUrl[0]).text().replace(/\]\]\-?\-?\>/, '').replace(/(.*)\<\!\-?\-?\[CDATA\[/, '').replace(/ /g,'')));
 								}
 								console.log('VastAdParser:: Found vast wrapper, load ad: ' + _url);
 								wrapperRedirects++;
-								_requestAd(_url);
+								_requestAd(_url, true);
 							} else {
 								console.log('VastAdParser::maxWrapperRedirects reached. Skip ad.');
 								valid = false;

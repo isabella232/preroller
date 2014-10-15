@@ -27,6 +27,7 @@ function findAndReplace(id){
 function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
   var preRollPluginSettings;
   var postRollPluginSettings;
+  var secondXhr;
   jQuery('.fluid-width-video-wrapper').first().css('visibility','hidden');
   id = zsDefaultFalse(id);
   prerollXML = zsDefaultFalse(prerollXML);
@@ -41,6 +42,15 @@ function makeItPreroll(id, prerollXML, prerollTime, postrollXML, postrollTime){
     security: MyAjax.security
   }, function(response){
     console.log('Vast Found');
+    //console.log(response);
+    /**
+    secondXhr = jQuery.post(MyAjax.ajaxurl, {
+      action: 'go_get_that_vast',
+      //We'll feed it the ID so it can cache in a transient with the ID and find to retrieve later.
+      vast_url: prerollXML,
+      security: MyAjax.security
+    });
+    **/
   }).done(function(){
     var pageHeight;
 
