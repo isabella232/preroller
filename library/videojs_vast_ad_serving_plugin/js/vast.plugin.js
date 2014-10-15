@@ -849,7 +849,11 @@ function vastPlugin(options) {
 					// Check for Wrapper response
 					var vastWrapper = vastAd.querySelector('Wrapper');
 					if (vastWrapper) {
-						var vastWrapperAdTagUrl = vastAd.querySelector('VASTAdTagURL,VASTAdTagURI');
+						//var vastWrapperAdTagUrl = vastAd.querySelector('VASTAdTagURL,VASTAdTagURI');
+						console.log('Try and find redirects.');
+						var vastWrapperAdTagUrl = jQuery(vastAd).find('VASTAdTagURL');
+						var vastWrapperAdTagUrlTwo = jQuery(vastAd).find('VASTAdTagURI');
+						jQuery.extend(vastWrapperAdTagUrl, vastWrapperAdTagUrlTwo);
 						if (vastWrapperAdTagUrl) {
 							if (wrapperRedirects < maxWrapperRedirects) {
 								var vastWrapperAdTagUrls = vastWrapperAdTagUrl.getElementsByTagName('URL');
